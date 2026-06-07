@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPMA 2026 — Trip Companion · Dan Duersch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Libre+Franklin:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#122441;
+    --navy-soft:#1c3457;
+    --ink:#1b222e;
+    --paper:#f6f2ea;
+    --paper-2:#efe8db;
+    --card:#fffdf8;
+    --gold:#bd7d33;
+    --gold-deep:#9a611f;
+    --teal:#2c6e69;
+    --line:rgba(18,36,65,.14);
+    --line-strong:rgba(18,36,65,.28);
+    --shadow:0 1px 2px rgba(18,36,65,.06),0 8px 24px rgba(18,36,65,.08);
+    --muted:#5c6675;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Libre Franklin",system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:64px;
+  }
+  /* ---- Hero ---- */
+  .hero{
+    background:
+      radial-gradient(120% 120% at 85% -10%, rgba(189,125,51,.30), transparent 55%),
+      radial-gradient(120% 120% at 0% 110%, rgba(44,110,105,.30), transparent 50%),
+      linear-gradient(160deg,var(--navy),var(--navy-soft));
+    color:#f7f3ec;
+    padding:38px 22px 30px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);
+    background-size:14px 14px;opacity:.5;pointer-events:none;
+  }
+  .hero .kicker{
+    font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;margin-bottom:14px;
+  }
+  .hero h1{
+    font-family:"Fraunces",serif;font-weight:600;font-size:2.35rem;
+    line-height:1.02;letter-spacing:-.01em;margin-bottom:6px;
+  }
+  .hero h1 em{font-style:italic;color:#f2c98a;font-weight:500}
+  .hero .sub{font-size:1rem;color:#cdd6e3;font-weight:400;max-width:30ch}
+  .hero .meta{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;
+  }
+  .chip{
+    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);
+    padding:5px 11px;border-radius:999px;font-size:.78rem;font-weight:500;
+    color:#eef2f8;backdrop-filter:blur(4px);
+  }
+  /* ---- Nav ---- */
+  nav{
+    position:sticky;top:0;z-index:40;background:rgba(246,242,234,.93);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+    display:flex;overflow-x:auto;scrollbar-width:none;
+  }
+  nav::-webkit-scrollbar{display:none}
+  nav a{
+    flex:0 0 auto;padding:13px 16px;font-size:.82rem;font-weight:600;
+    color:var(--muted);text-decoration:none;white-space:nowrap;
+    border-bottom:2px solid transparent;letter-spacing:.02em;
+  }
+  nav a.active{color:var(--navy);border-bottom-color:var(--gold)}
+  main{max-width:760px;margin:0 auto;padding:8px 16px 0}
+  section{padding:26px 0 8px;scroll-margin-top:54px}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px}
+  h2{
+    font-family:"Fraunces",serif;font-weight:600;font-size:1.5rem;
+    color:var(--navy);letter-spacing:-.01em;
+  }
+  .sec-note{font-size:.82rem;color:var(--muted);margin:2px 0 16px}
+  h3.day{
+    font-family:"Fraunces",serif;font-size:1.06rem;color:var(--navy);
+    margin:22px 0 2px;display:flex;align-items:center;gap:9px;
+  }
+  h3.day .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex:0 0 auto}
+  h3.day small{font-family:"Libre Franklin";font-weight:500;color:var(--muted);font-size:.74rem;letter-spacing:.04em}
+  /* ---- Cards ---- */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 16px 6px;margin-bottom:14px;box-shadow:var(--shadow);
+  }
+  .card.flush{padding-bottom:14px}
+  .callout{
+    border-left:3px solid var(--gold);background:linear-gradient(90deg,rgba(189,125,51,.09),transparent);
+    border-radius:10px;padding:13px 15px;margin-bottom:14px;font-size:.9rem;
+  }
+  .callout.alert{border-left-color:#b4452f;background:linear-gradient(90deg,rgba(180,69,47,.10),transparent)}
+  .callout strong{color:var(--navy)}
+  /* ---- Checklist ---- */
+  .check{
+    display:flex;gap:11px;align-items:flex-start;padding:9px 2px;
+    border-bottom:1px solid var(--line);cursor:pointer;user-select:none;
+  }
+  .check:last-child{border-bottom:none}
+  .box{
+    flex:0 0 auto;width:20px;height:20px;margin-top:2px;border-radius:6px;
+    border:2px solid var(--line-strong);background:#fff;position:relative;
+    transition:all .15s ease;
+  }
+  .check.done .box{background:var(--teal);border-color:var(--teal)}
+  .box::after{
+    content:"";position:absolute;left:5.5px;top:1.5px;width:5px;height:10px;
+    border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) scale(0);
+    transition:transform .15s ease;
+  }
+  .check.done .box::after{transform:rotate(45deg) scale(1)}
+  .c-body{flex:1;min-width:0}
+  .c-time{font-size:.74rem;font-weight:700;color:var(--gold-deep);letter-spacing:.03em}
+  .c-title{font-size:.93rem;font-weight:500;color:var(--ink)}
+  .check.done .c-title{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line-strong)}
+  .c-loc{font-size:.76rem;color:var(--muted)}
+  .star{
+    display:inline-block;font-size:.64rem;font-weight:700;color:var(--gold-deep);
+    background:rgba(189,125,51,.14);border:1px solid rgba(189,125,51,.3);
+    padding:1px 6px;border-radius:999px;margin-left:6px;letter-spacing:.06em;vertical-align:middle;
+  }
+  .conflict{
+    border:1px solid rgba(180,69,47,.4);background:rgba(180,69,47,.05);
+    border-radius:11px;padding:4px 11px 2px;margin:8px 0;
+  }
+  .cbadge{
+    display:inline-block;font-size:.62rem;font-weight:700;color:#fff;
+    background:#b4452f;padding:2px 9px;border-radius:999px;letter-spacing:.07em;
+    margin:6px 0 2px;text-transform:uppercase;
+  }
+  .conflict .check{border-bottom:1px dashed rgba(180,69,47,.25)}
+  .conflict .check:last-child{border-bottom:none}
+  /* ---- Restaurants ---- */
+  .rest{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+  .rest:last-child{border-bottom:none}
+  .rest .rating{
+    flex:0 0 auto;width:44px;height:44px;border-radius:11px;background:var(--navy);
+    color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-weight:700;font-size:.95rem;line-height:1;
+  }
+  .rest .rating span{font-size:.52rem;font-weight:600;color:#f2c98a;margin-top:2px;letter-spacing:.05em}
+  .rest .rb{flex:1;min-width:0}
+  .rest .rname{font-weight:600;font-size:.96rem;color:var(--navy)}
+  .rest .rtag{font-size:.74rem;color:var(--gold-deep);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .rest .rdesc{font-size:.84rem;color:var(--ink);margin-top:3px}
+  .rest .rmeta{font-size:.74rem;color:var(--muted);margin-top:4px}
+  .walk{
+    display:inline-block;font-size:.68rem;font-weight:600;color:var(--teal);
+    background:rgba(44,110,105,.12);padding:1px 7px;border-radius:999px;margin-right:6px;
+  }
+  /* ---- Progress ---- */
+  .prog{font-size:.74rem;color:var(--muted);font-weight:600}
+  .barwrap{height:5px;background:var(--paper-2);border-radius:999px;overflow:hidden;margin:6px 0 2px}
+  .bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0;transition:width .3s ease;border-radius:999px}
+  /* ---- Misc ---- */
+  .twocol{display:grid;grid-template-columns:1fr;gap:0}
+  .leg{font-size:.78rem;color:var(--muted);margin-top:10px;display:flex;align-items:center;gap:6px}
+  footer{text-align:center;padding:30px 20px;color:var(--muted);font-size:.76rem}
+  footer .wm{font-family:"Fraunces",serif;font-style:italic;color:var(--navy);font-size:.95rem}
+  a.inline{color:var(--gold-deep);font-weight:600;text-decoration:none;border-bottom:1px solid rgba(189,125,51,.4)}
+  .ix{font-size:.8rem;color:var(--muted);font-style:italic;margin:2px 0 12px}
+  @media print{
+    nav{display:none}body{background:#fff;padding:0}
+    .card,.callout{box-shadow:none;break-inside:avoid}
+    .hero{color:#000;background:#fff;border-bottom:2px solid #000}
+    .hero .kicker,.hero h1 em,.hero .sub,.chip{color:#000}
+    .chip{border-color:#000}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">Trip Companion · June 10–18, 2026</div>
+  <h1>Florida &amp; <em>Greenville</em></h1>
+  <div class="sub">Canon visit in Boca Raton, then IPMA 2026 — “Taking Care of Business.”</div>
+  <div class="meta">
+    <span class="chip">✈︎ 9 days · 8 nights</span>
+    <span class="chip">🅿︎ Car parked at SLC</span>
+    <span class="chip">🧳 No laundry planned</span>
+  </div>
+</header>
+
+<nav id="nav">
+  <a href="#overview">Overview</a>
+  <a href="#flags">Heads-up</a>
+  <a href="#schedule">Schedule</a>
+  <a href="#eat">Eat</a>
+  <a href="#pack">Pack</a>
+</nav>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="sec-head"><h2>The Itinerary</h2></div>
+    <p class="sec-note">Flights, hotels, and the car at a glance.</p>
+
+    <div class="card">
+      <h3 class="day"><span class="dot"></span>Wed, Jun 10 <small>SLC → Boca Raton</small></h3>
+      <div class="check"><div class="c-body"><span class="c-time">~5:00 AM</span><div class="c-title">Drop car at SLC long-term parking — photo your level/row</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">7:00 AM</span><div class="c-title">UA 1232 · SLC → Denver</div><div class="c-loc">Arrive DEN 8:42 AM · 1h27m layover</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">10:09 AM</span><div class="c-title">UA 1701 · Denver → Miami</div><div class="c-loc">Arrive MIA 4:16 PM EDT</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">6:16 PM</span><div class="c-title">Check in · Boca Raton Marriott at Boca Center</div><div class="c-loc">5150 Town Center Cir · Canon dinner this evening</div></div></div>
+    </div>
+
+    <div class="card">
+      <h3 class="day"><span class="dot"></span>Fri, Jun 12 <small>Boca → Greenville</small></h3>
+      <div class="callout alert" style="margin:4px 0 12px"><strong>Brutal early start.</strong> Checkout 4:20 AM for a 6:20 AM Miami departure. Pre-pack the night before and pre-arrange a 4 AM ride.</div>
+      <div class="check"><div class="c-body"><span class="c-time">4:20 AM</span><div class="c-title">Check out · Boca Raton Marriott</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">6:20 AM</span><div class="c-title">WN 974 · Miami → Baltimore</div><div class="c-loc">Arrive BWI 8:55 AM · 2h50m layover</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">11:45 AM</span><div class="c-title">WN 952 · Baltimore → Greenville</div><div class="c-loc">Arrive GSP 1:15 PM</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">3:00 PM</span><div class="c-title">Check in · Hyatt Regency Greenville</div><div class="c-loc">220 N Main St · conference hotel</div></div></div>
+    </div>
+
+    <div class="card">
+      <h3 class="day"><span class="dot"></span>Thu, Jun 18 <small>Greenville → SLC</small></h3>
+      <div class="check"><div class="c-body"><span class="c-time">11:00 AM</span><div class="c-title">Check out · Hyatt Regency (do it before the 8:30 bus — see Heads-up)</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">5:10 PM</span><div class="c-title">UA 4038 · Greenville → Houston</div><div class="c-loc">Arrive IAH 6:45 PM CDT · 1h40m layover</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">8:25 PM</span><div class="c-title">UA 2157 · Houston → SLC</div><div class="c-loc">Arrive SLC 10:43 PM · retrieve car (late-night shuttle)</div></div></div>
+    </div>
+  </section>
+
+  <!-- FLAGS -->
+  <section id="flags">
+    <div class="sec-head"><h2>Heads-up</h2></div>
+    <p class="sec-note">Four things worth handling before they bite.</p>
+
+    <div class="callout alert">
+      <strong>Verify the phantom 6/13 flights.</strong> Your calendar also holds a second United SLC→DEN→GSP booking for Sat 6/13 (conf. LR2Z65) — a leftover from an earlier itinerary. Your real route flies you through Boca and lands you in Greenville Friday. Confirm with your travel desk it's cancelled so it doesn't snarl your reservation.
+    </div>
+    <div class="callout">
+      <strong>Thursday checkout vs. the BJU tour.</strong> Hotel checkout is 11 AM, but the Bob Jones University press-tour bus leaves the lobby at 8:30 AM and returns ~noon. Check out (or set express/late checkout) <em>before</em> the bus, store bags with the bell desk, and you're free until your 5:10 PM flight.
+    </div>
+    <div class="callout">
+      <strong>CPAP travels free.</strong> Your ResMed is a medical device — per TSA it does <em>not</em> count against your two carry-ons. Keep it, your meds, and a change of clothes on you, not in a checked bag. Pack the mask, hose, charger, and a short extension cord.
+    </div>
+    <div class="callout">
+      <strong>Parking note.</strong> Roughly 8 nights at SLC. Snap a photo of your row/level Wednesday morning — you'll be hunting for the car at 11 PM Thursday after a long travel day.
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule">
+    <div class="sec-head"><h2>My IPMA Schedule</h2><span class="prog" id="prog-sched">0 of 0</span></div>
+    <div class="barwrap"><div class="bar" id="bar-sched"></div></div>
+    <p class="ix">These are the sessions you selected, pulled from your calendar. All times are Greenville (Eastern). Tap to check off; progress saves automatically. The red <span class="cbadge" style="margin:0">Double-booked</span> blocks are slots where you picked two at once — choose one.</p>
+
+    <div class="callout alert"><strong>5 scheduling conflicts to resolve.</strong> You've got two sessions selected in the same slot five times: Sun 3:30, Mon 2:45, Tue 1:45, Wed 10:00, and Wed 2:30. They're grouped and flagged below.</div>
+
+    <div class="card" data-track="sched">
+      <h3 class="day"><span class="dot"></span>Sat, Jun 13 <small>Arrival · free evening</small></h3>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">2:00–5:00 PM</span><div class="c-title">Registration</div><div class="c-loc">Meeting Planner Office</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">Evening</span><div class="c-title">Free — see the Eat tab for your walkable plan</div></div></div>
+    </div>
+
+    <div class="card" data-track="sched">
+      <h3 class="day"><span class="dot"></span>Sun, Jun 14 <small>Conference opens</small></h3>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">8:00–11:00 AM</span><div class="c-title">Sunday Stroll</div><div class="c-loc">Meet in Lobby</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">2:30–3:30 PM</span><div class="c-title">RSA Users Group</div><div class="c-loc">Regency G</div></div></div>
+      <div class="conflict">
+        <span class="cbadge">Double-booked · 3:30–4:30 PM</span>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Canon Focus Group<span class="star">FOR YOU</span></div><div class="c-loc">Redbud · ties to your Boca Canon visit</div></div></div>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Ricoh Users Group</div><div class="c-loc">Regency F</div></div></div>
+      </div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">6:00–9:00 PM</span><div class="c-title">Welcome Reception</div><div class="c-loc">Outdoor Plaza (2nd floor) · dress the part</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">9:00 PM–12 AM</span><div class="c-title">Hospitality Suite</div><div class="c-loc">Suite 864</div></div></div>
+    </div>
+
+    <div class="card" data-track="sched">
+      <h3 class="day"><span class="dot"></span>Mon, Jun 15 <small>Keynote · sponsored by RSA</small></h3>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">7:30–8:45 AM</span><div class="c-title">Breakfast</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">8:00–8:45 AM</span><div class="c-title">From Toner to Textiles: New Services Driving In-plant Growth</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">9:00–10:00 AM</span><div class="c-title">Keynote Speaker (sponsored by RSA)</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">10:00 AM–12 PM</span><div class="c-title">Vendor Fair</div><div class="c-loc">Regency Ballroom</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">12:00–1:30 PM</span><div class="c-title">Lunch</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">12:30–1:30 PM</span><div class="c-title">Ricoh: From Touchpoints to Throughput<span class="star">FOR YOU</span></div><div class="c-loc">Studio 200 @ NOMA · lunch session</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">1:45–2:30 PM</span><div class="c-title">Roundtable: West Region<span class="star">FOR YOU</span></div><div class="c-loc">Dogwood · UT/CO/NV/CA/OR/WA/ID/MT/WY (your region)</div></div></div>
+      <div class="conflict">
+        <span class="cbadge">Double-booked · 2:45–3:30 PM</span>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">A Postal Primer for Printers<span class="star">FOR YOU</span></div><div class="c-loc">Regency H · pairs with your mail-consolidation work</div></div></div>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">What Print Providers Should Measure to Improve Operations &amp; Prepare for AI<span class="star">FOR YOU</span></div><div class="c-loc">Redbud</div></div></div>
+      </div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">4:30–6:30 PM</span><div class="c-title">Vendor Reception</div><div class="c-loc">Grand Ballroom BC</div></div></div>
+    </div>
+
+    <div class="card" data-track="sched">
+      <h3 class="day"><span class="dot"></span>Tue, Jun 16 <small>Keynote · Nathaniel Hearne · Awards night</small></h3>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">7:30–8:45 AM</span><div class="c-title">Breakfast</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">8:00–8:45 AM</span><div class="c-title">Marketing Your In-Plant</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">9:00–10:00 AM</span><div class="c-title">Keynote: Nathaniel Hearne — The Courage to Leave a Legacy</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">12:00–1:30 PM</span><div class="c-title">Lunch</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">12:30–1:30 PM</span><div class="c-title">Built to Last: Future-Proofing Your In-Plant<span class="star">FOR YOU</span></div><div class="c-loc">Studio 200 @ NOMA · lunch session</div></div></div>
+      <div class="conflict">
+        <span class="cbadge">Double-booked · 1:45–2:30 PM</span>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Responsibilities of Leaders (Panel)<span class="star">FOR YOU</span></div><div class="c-loc">Regency G</div></div></div>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">The Rise of the Virtual Promo Products Department</div><div class="c-loc">Regency H</div></div></div>
+      </div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">4:00–5:00 PM</span><div class="c-title">Vendor Door Prizes</div><div class="c-loc">Regency Ballroom</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">5:30–7:00 PM</span><div class="c-title">Awards Reception</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">7:00–7:45 PM</span><div class="c-title">Awards Dinner Banquet<span class="star">FOR YOU</span></div><div class="c-loc">Studio 200 @ NOMA · dressiest night</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">7:45–9:45 PM</span><div class="c-title">Awards Ceremony</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+    </div>
+
+    <div class="card" data-track="sched">
+      <h3 class="day"><span class="dot"></span>Wed, Jun 17 <small>Keynote · Bowen F. White, M.D.</small></h3>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">7:30–8:45 AM</span><div class="c-title">Breakfast</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">8:00–8:45 AM</span><div class="c-title">AI Decisions In-Plant Leaders Must Get Right<span class="star">FOR YOU</span></div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">9:00–9:45 AM</span><div class="c-title">Keynote: Why Normal Still Isn't Healthy (Bowen F. White, M.D.)</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="conflict">
+        <span class="cbadge">Double-booked · 10:00–10:45 AM</span>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Innovations that Matter in 2026</div><div class="c-loc">Regency H</div></div></div>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Mastering the Mailer's Scorecard<span class="star">FOR YOU</span></div><div class="c-loc">Regency F</div></div></div>
+      </div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">11:00–11:45 AM</span><div class="c-title">USPS Promotions Made Simple<span class="star">FOR YOU</span></div><div class="c-loc">Regency H</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">12:00–1:30 PM</span><div class="c-title">Lunch</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">1:30–2:15 PM</span><div class="c-title">The Mail Manifesto: Crowdsourced Postal Answers<span class="star">FOR YOU</span></div><div class="c-loc">Regency F</div></div></div>
+      <div class="conflict">
+        <span class="cbadge">Double-booked · 2:30–3:15 PM</span>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">So You Bought It. Now What?<span class="star">FOR YOU</span></div><div class="c-loc">Regency F</div></div></div>
+        <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Winners Circle: IPMA Awards</div><div class="c-loc">Regency G</div></div></div>
+      </div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">3:30–4:00 PM</span><div class="c-title">General Session — Town Hall</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">4:00–5:00 PM</span><div class="c-title">Shop Talk LIVE (Bring Your Own Problem)<span class="star">FOR YOU</span></div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">5:30 PM</span><div class="c-title">Group Photo</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">6:00–9:00 PM</span><div class="c-title">Night Outing — Group Therapy Pub &amp; Playground<span class="star">FOR YOU</span></div><div class="c-loc">320 Falls St · walkable from the hotel</div></div></div>
+    </div>
+
+    <div class="card" data-track="sched">
+      <h3 class="day"><span class="dot"></span>Thu, Jun 18 <small>Tour + fly home</small></h3>
+      <div class="callout" style="margin:4px 0 12px">Check out + store bags with the bell desk <strong>before</strong> the 8:30 AM bus — you won't be back before the 11 AM checkout.</div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">7:30–8:30 AM</span><div class="c-title">Breakfast</div><div class="c-loc">Studio 200 @ NOMA</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">8:30 AM</span><div class="c-title">Board bus to tour</div><div class="c-loc">Hotel Lobby</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">9:00 AM–12 PM</span><div class="c-title">Bob Jones University Press — Site Visit<span class="star">FOR YOU</span></div><div class="c-loc">Largest manufacturer in Greenville city limits</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><span class="c-time">11:45 AM</span><div class="c-title">Board bus back to hotel</div></div></div>
+      <div class="check"><div class="c-body"><span class="c-time">~3:00 PM</span><div class="c-title">Head to GSP for 5:10 PM flight</div></div></div>
+    </div>
+  </section>
+
+  <!-- EAT -->
+  <section id="eat">
+    <div class="sec-head"><h2>Where to Eat</h2></div>
+    <p class="sec-note">All walkable from the Hyatt on N Main — Greenville's downtown is one long, leafy, strollable Main Street down to the falls. No car needed.</p>
+
+    <h3 class="day"><span class="dot"></span>Your Free Saturday (6/13)</h3>
+    <p class="ix">A food-anchored stroll from the hotel down to Falls Park and back.</p>
+    <div class="card flush">
+      <div class="rest">
+        <div class="rating">4.9<span>COFFEE</span></div>
+        <div class="rb"><div class="rname">Tselia Coffee</div><div class="rtag">8:30 AM · Start</div>
+        <div class="rdesc">Highest-rated coffee downtown, right across from your hotel.</div>
+        <div class="rmeta"><span class="walk">1 min</span>219 N Main St</div></div>
+      </div>
+      <div class="rest">
+        <div class="rating">4.8<span>BRUNCH</span></div>
+        <div class="rb"><div class="rname">STIR</div><div class="rtag">10:00 AM · Brunch</div>
+        <div class="rdesc">Saturday brunch includes a small buffet with any entrée. Cheese grits and chicken &amp; waffles are the standouts.</div>
+        <div class="rmeta"><span class="walk">5 min</span>214 E McBee Ave</div></div>
+      </div>
+      <div class="rest">
+        <div class="rating">★<span>WALK</span></div>
+        <div class="rb"><div class="rname">Falls Park &amp; Liberty Bridge</div><div class="rtag">Noon · Stretch your legs</div>
+        <div class="rdesc">The waterfall and suspension bridge in the middle of downtown — Greenville's signature view.</div>
+        <div class="rmeta"><span class="walk">8 min</span>Reedy River</div></div>
+      </div>
+      <div class="rest">
+        <div class="rating">4.4<span>LUNCH</span></div>
+        <div class="rb"><div class="rname">Between the Trees</div><div class="rtag">1:00 PM · Lunch with a view</div>
+        <div class="rdesc">Right at the edge of the falls; praised shrimp &amp; grits. Portions run small for the price — a lighter lunch after brunch.</div>
+        <div class="rmeta"><span class="walk">9 min</span>44 E Camperdown Way</div></div>
+      </div>
+      <div class="rest">
+        <div class="rating">4.8<span>DINNER</span></div>
+        <div class="rb"><div class="rname">Sassafras Southern Bistro</div><div class="rtag">6:30 PM · Dinner</div>
+        <div class="rdesc">Southern bistro back up on N Main near the hotel; stuffed fried chicken is the signature. <strong>Reserve ahead</strong> for Saturday night.</div>
+        <div class="rmeta"><span class="walk">4 min</span>103 N Main St · ☎ 864-235-5670</div></div>
+      </div>
+    </div>
+
+    <h3 class="day"><span class="dot"></span>Monday "Night On Your Own" &amp; spare evenings</h3>
+    <div class="card flush">
+      <div class="rest">
+        <div class="rating">4.3<span>ROOFTOP</span></div>
+        <div class="rb"><div class="rname">UP on the Roof</div><div class="rtag">Rooftop · views</div>
+        <div class="rdesc">Rooftop bar &amp; American plates over downtown; top-3 burgers per regulars. Good group spot.</div>
+        <div class="rmeta"><span class="walk">7 min</span>250 Riverplace</div></div>
+      </div>
+      <div class="rest">
+        <div class="rating">4.3<span>UPSCALE</span></div>
+        <div class="rb"><div class="rname">Juniper</div><div class="rtag">Dinner · garden-rooftop</div>
+        <div class="rdesc">Stunning garden-themed rooftop, oysters &amp; cocktails, dress-up vibe. Pricier; go for atmosphere.</div>
+        <div class="rmeta"><span class="walk">7 min</span>315 S Main St</div></div>
+      </div>
+      <div class="rest">
+        <div class="rating">4.4<span>FARM-TO-TABLE</span></div>
+        <div class="rb"><div class="rname">Fork &amp; Plough</div><div class="rtag">Dinner · local favorite</div>
+        <div class="rdesc">Ever-changing farm-to-table menu; pork belly with fried green tomatoes is a hit. <strong>Note:</strong> ~2 mi east — grab a rideshare.</div>
+        <div class="rmeta">1629 E North St</div></div>
+      </div>
+    </div>
+
+    <h3 class="day"><span class="dot"></span>Quick coffee &amp; grab-and-go</h3>
+    <div class="card flush">
+      <div class="rest">
+        <div class="rating">4.7<span>COFFEE</span></div>
+        <div class="rb"><div class="rname">Methodical Coffee</div><div class="rtag">Espresso · pastries</div>
+        <div class="rmeta"><span class="walk">3 min</span>101 N Main St</div></div>
+      </div>
+      <div class="rest">
+        <div class="rating">4.8<span>RIVERSIDE</span></div>
+        <div class="rb"><div class="rname">Local Honey Coffee Co.</div><div class="rtag">Coffee by the river (closes ~3 PM)</div>
+        <div class="rmeta"><span class="walk">7 min</span>250 Riverplace</div></div>
+      </div>
+      <div class="rest">
+        <div class="rating">4.4<span>BRUNCH</span></div>
+        <div class="rb"><div class="rname">Crave</div><div class="rtag">Brunch · shrimp &amp; grits, lobster biscuit</div>
+        <div class="rmeta"><span class="walk">9 min</span>600 S Main St</div></div>
+      </div>
+    </div>
+    <p class="ix">In a pinch, Roost at the Hyatt is right downstairs. The conference hospitality suite (Suite 864) also runs late most nights with food and drinks.</p>
+  </section>
+
+  <!-- PACK -->
+  <section id="pack">
+    <div class="sec-head"><h2>Packing</h2><span class="prog" id="prog-pack">0 of 0</span></div>
+    <div class="barwrap"><div class="bar" id="bar-pack"></div></div>
+    <p class="ix">Built for 9 days, no laundry, and hot &amp; humid weather (both FL and SC run upper-80s to low-90s with afternoon storms). Check the forecast a couple days out.</p>
+
+    <div class="card" data-track="pack">
+      <h3 class="day"><span class="dot"></span>Business &amp; Conference</h3>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">1 pair slacks + 1 pair chinos (5 conference days is a lot for one pair)</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">2 button-down shirts</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">3–4 Intermountain branded polos (more pro than tees for the show floor)</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Belt + 5–6 pairs dress socks</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Comfortable dress shoes (you'll stand all day)</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Optional sport coat for Awards Banquet (Tue)</div></div></div>
+    </div>
+
+    <div class="card" data-track="pack">
+      <h3 class="day"><span class="dot"></span>Casual &amp; Evenings</h3>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">2 pairs shorts (warm-evening plan)</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">2–3 Intermountain tees</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Sneakers (Boca walking day + Greenville on foot)</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Swim trunks (both hotels have pools)</div></div></div>
+    </div>
+
+    <div class="card" data-track="pack">
+      <h3 class="day"><span class="dot"></span>Don't Forget</h3>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">ResMed travel CPAP + mask, hose, charger, short extension cord</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Meds — in carry-on, not checked</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Phone/watch chargers + portable battery</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Sunscreen + sunglasses</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Packable rain shell or compact umbrella (afternoon storms)</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">Business cards</div></div></div>
+      <div class="check"><div class="box"></div><div class="c-body"><div class="c-title">IPMA badge / registration confirmation</div></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wm">Taking Care of Business</div>
+    Built for Dan Duersch · IPMA 2026, Greenville SC<br>
+    Progress is saved on this device. Tap to reset a tab by unchecking items.
+  </footer>
+</main>
+
+<script>
+  // ---------- nav active state ----------
+  const navLinks=[...document.querySelectorAll('#nav a')];
+  const sections=navLinks.map(a=>document.querySelector(a.getAttribute('href')));
+  const onScroll=()=>{
+    let idx=0;const y=window.scrollY+70;
+    sections.forEach((s,i)=>{if(s.offsetTop<=y)idx=i;});
+    navLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+  };
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+  // ---------- checklist + persistence ----------
+  const STORE_KEY='ipma-trip-checks';
+  let state={};
+
+  // give each checkable row a stable id from its text
+  const rows=[...document.querySelectorAll('.check')].filter(r=>r.querySelector('.box'));
+  rows.forEach((row,i)=>{
+    const txt=(row.querySelector('.c-title')?.textContent||'').slice(0,40);
+    row.dataset.id=i+'::'+txt;
+  });
+
+  function applyState(){
+    rows.forEach(row=>{
+      const on=!!state[row.dataset.id];
+      row.classList.toggle('done',on);
+    });
+    updateProgress();
+  }
+
+  function updateProgress(){
+    [['sched','prog-sched','bar-sched'],['pack','prog-pack','bar-pack']].forEach(([track,pId,bId])=>{
+      const trackRows=rows.filter(r=>r.closest('[data-track="'+track+'"]'));
+      const done=trackRows.filter(r=>r.classList.contains('done')).length;
+      const total=trackRows.length;
+      const pEl=document.getElementById(pId),bEl=document.getElementById(bId);
+      if(pEl)pEl.textContent=done+' of '+total;
+      if(bEl)bEl.style.width=(total?Math.round(done/total*100):0)+'%';
+    });
+  }
+
+  function save(){
+    try{localStorage.setItem(STORE_KEY,JSON.stringify(state));}
+    catch(e){console.warn('save failed',e);}
+  }
+
+  function load(){
+    try{
+      const raw=localStorage.getItem(STORE_KEY);
+      if(raw)state=JSON.parse(raw);
+    }catch(e){state={};}
+    applyState();
+  }
+
+  rows.forEach(row=>{
+    row.addEventListener('click',()=>{
+      const id=row.dataset.id;
+      state[id]=!state[id];
+      row.classList.toggle('done',state[id]);
+      updateProgress();
+      save();
+    });
+  });
+
+  load();
+</script>
+</body>
+</html>
